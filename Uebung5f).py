@@ -24,10 +24,10 @@ m2Ne = 0
 m1Zae = 0
 m1Ne = 0
 for i in range(0, 100):
-    m2Zae = m2Zae+u3[i]*(q3AblAbl[i] - q3[i]*(q2Abl[i]**2))
+    m2Zae = m2Zae + u3[i]*(q3AblAbl[i] - q3[i]*(q2Abl[i]**2))
     m2Ne = m2Ne +(q3AblAbl[i]-q3[i]*(q2Abl[i]**2))*(q3AblAbl[i]-q3[i]*(q2Abl[i]**2))
     m1Zae = m1Zae + u1[i]*(q1AblAbl[i]+g)
-    m1Ne = (q1AblAbl[i] + g)**2
+    m1Ne = m1Ne + (q1AblAbl[i] + g)**2
 
 m2 = (m2Zae/(m2Ne))
 m1 = ((m1Zae/m1Ne) - m2)
