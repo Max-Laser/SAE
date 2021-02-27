@@ -10,8 +10,8 @@ env = Pend2dBallThrowDMP()
 
 numDim = 10
 numSamples = 25
-maxIter = 100
-numTrials =10
+maxIter = 25#100
+numTrials =5#10
 
 def mean_confidence_interval(data, confidence=0.95):
     a = 1.0 * np.array(data)
@@ -23,42 +23,44 @@ def mean_confidence_interval(data, confidence=0.95):
 # YOUR CODE HERE
 
 grad_sample = np.zeros((numSamples,))
-mu=np.zeros((numDim,))
+
 Sigma=np.diag(np.array([10, 10, 10, 10, 10, 10, 10, 10, 10, 10]))#TODO evtl 100
 rew = np.zeros((numSamples,))
 rew_step=np.zeros((maxIter,))
-rew_mean=np.zeros((numTrials,))
+rew_mean=np.zeros((numTrials,maxIter))
+rew_plot=np.zeros((maxIter,))
+error=np.zeros((maxIter,))
+alpha=0.1
 
 #To plot
-x_achse=np.zeros((numTrials))
-error=np.zeros((numTrials,))
+x_achse=np.zeros((maxIter))
 
 for k in range(0,numTrials):
+    mu = np.zeros((numDim,))
     for i in range(0,maxIter):
+        grad = 0
         for t in range(0,numSamples):
             theta= np.random.multivariate_normal(mu, Sigma)
             rew[t]= env.getReward(theta)
-            grad_sample[t] = (1 / maxIter) * np.linalg.inv(Sigma) * (theta - mu[i]) * (rew[t] - 0.01)
-        #theta_mean = np.mean(theta)
-        #rew_mean= np.mean(rew)
-        grad= np.mean(grad_sample)
-        rew_mean[i] = np.mean(rew)
-        p=mu[i]+0.1*grad
-        mu[i+1]=p
-        """""
-        temp = np.zeros((5, 1))
-        for h in range(0, 5):
-            temp[h] = theta
-        print(env.getReward(temp))
-        """""
+            grad += (1 / maxIter) * np.dot(np.linalg.inv(Sigma),(theta - mu)) * (rew[t])
+
+        rew_step[i] =np.mean(rew)
+        mu+=alpha*grad
         print(i)
 
-    x_achse[k]=k
-    rew_mean[k],error[k]= mean_confidence_interval(data=mu)
+    rew_mean[k,:]= rew_step
 
 
-plt.plot(x_achse,np.transpose(rew_mean1),'ob',label='average return')
-plt.errorbar(x_achse, np.transpose(rew_mean1) ,yerr = error,fmt ='o')
+for i in range(0,maxIter):
+    h=rew_mean[:, i]
+    rew_plot[i],error[i]= mean_confidence_interval(data=rew_mean[:,i])
+    x_achse[i] = i
+
+
+
+
+plt.plot(x_achse,rew_plot,'ob',label='average return')
+plt.errorbar(x_achse,rew_plot ,yerr = error,fmt ='o')
 plt.legend()
 plt.show()
 
