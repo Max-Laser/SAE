@@ -10,8 +10,8 @@ env = Pend2dBallThrowDMP()
 
 numDim = 10
 numSamples = 25
-maxIter = 25#100
-numTrials =5#10
+maxIter = 100
+numTrials =10
 
 def mean_confidence_interval(data, confidence=0.95):
     a = 1.0 * np.array(data)
@@ -38,16 +38,21 @@ x_achse=np.zeros((maxIter))
 for k in range(0,numTrials):
     mu = np.zeros((numDim,))
     for i in range(0,maxIter):
-        grad = 0
+        grad_sample = np.zeros((numSamples,numDim))
         for t in range(0,numSamples):
             theta= np.random.multivariate_normal(mu, Sigma)
             rew[t]= env.getReward(theta)
-            grad += (1 / maxIter) * np.dot(np.linalg.inv(Sigma),(theta - mu)) * (rew[t])
+
 
         rew_step[i] =np.mean(rew)
-        mu+=alpha*grad
+
         print(i)
 
+        for t in range(0, numSamples):
+            o=np.dot(np.linalg.inv(Sigma), (theta - mu)) * (rew[t])
+            grad_sample[t,:] =  np.dot(np.linalg.inv(Sigma), (theta - mu)) * (rew[t])
+    grad_sample_mean= np.mean(grad_sample)
+    mu += alpha * grad_sample_mean
     rew_mean[k,:]= rew_step
 
 
