@@ -84,7 +84,7 @@ for k in range(0,numTrials):
     mu = np.zeros((numDim,))
     sigmaAlone = np.repeat([np.sqrt(10)],numDim)
     for i in range(0,maxIter):
-        Sigma = np.diag(np.array(sigmaAlone[0]**2,sigmaAlone[1]**2, sigmaAlone[2]**2, sigmaAlone[3]**2,sigmaAlone[4]**2, sigmaAlone[5]**2,sigmaAlone[6]**2, sigmaAlone[7]**2, sigmaAlone[8]**2,sigmaAlone[9]**2))  # TODO evtl 1
+        Sigma = np.diag(np.array([sigmaAlone[0]**2,sigmaAlone[1]**2, sigmaAlone[2]**2, sigmaAlone[3]**2,sigmaAlone[4]**2, sigmaAlone[5]**2,sigmaAlone[6]**2, sigmaAlone[7]**2, sigmaAlone[8]**2,sigmaAlone[9]**2]))  # TODO evtl 1
         grad_sample = np.zeros((numDim,))
         theta = np.zeros((numSamples, numDim))
         for t in range(0,numSamples):
@@ -101,9 +101,9 @@ for k in range(0,numTrials):
             #rew_grad[t][:]= np.dot(np.linalg.inv(Sigma), (theta[t] - mu) * (rew[t]))
             #print(rew[t])
             rew_grad[t,:] = np.dot(np.linalg.inv(Sigma), (theta[t] - mu)) * ((rew[t])- rew_step)
-            SigmaAlone3= np.linalg.inv(np.dot(np.dot(sigmaAlone,sigmaAlone ),sigmaAlone))
+            SigmaAlone3= 1/(np.dot(np.dot(sigmaAlone,sigmaAlone ),sigmaAlone))
             theta_mu= np.power(theta[t]-mu,2)
-            sigmagrad[t]= (-1)*np.linalg.inv(sigmaAlone) + np.dot(theta_mu,SigmaAlone3)
+            sigmagrad[t]= (-1)/(sigmaAlone) + np.dot(theta_mu,SigmaAlone3)
             #test=theta[t]
 
         grad_sample_mean= rew_grad.mean(axis=0)
