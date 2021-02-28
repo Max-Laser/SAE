@@ -72,7 +72,11 @@ plt.errorbar(x_achse,rew_plot ,yerr = error,fmt ='o')
 plt.legend()
 plt.show()
 
-
+for i in range(numSamples):
+    if useBaseline:
+        rewardGradients[i,:] = (np.linalg.inv(sigmaMatrix) @ (theta_samples[i,:]-mu)) * (rewards[i] - averageReward)
+    else
+        rewardGradients[i,:] = (np.linalg.inv(sigmaMatrix) @ (theta_samples[i,:]-mu)) * rewards[i]
 
 
 
